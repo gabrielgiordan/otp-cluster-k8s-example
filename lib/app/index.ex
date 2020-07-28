@@ -5,7 +5,7 @@ defmodule App.Index do
     req =
       :cowboy_req.reply(
         200,
-        %{"content-type" => "application/json"},
+        %{"content-type" => "plain/text"},
         "Current node: #{inspect(node())}\nConnected nodes: #{inspect(Node.list())}",
         req
       )
