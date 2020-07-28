@@ -1,16 +1,25 @@
-FROM elixir:1.10-alpine
+FROM elixir:1.10-alpine AS build
 
-WORKDIR /app
+ADD . .
 
-ADD . /app
-
-EXPOSE 4000
-ENV PORT 4000
 ENV MIX_ENV prod
 
 RUN mix local.hex --force && \
 	  mix local.rebar --force && \
     mix do deps.get, deps.compile && \
-    mix do compile
+    mix do compile && \
+    mix release
 
-CMD ["mix", "app.start"]
+FROM alpine:3.12 AS app
+
+RUN apk add --no-cache \
+    openssl \
+    ca-certificates \
+    bash
+
+COPY --from=build _build .
+
+ENV PORT 4000
+EXPOSE 4000
+
+CMD ["./prod/rel/app/bin/app", "start"]

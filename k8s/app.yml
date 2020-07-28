@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: app-container
-        image: app:libcluster
+        image: gabrielgiordan/app:libcluster
         ports:
         - containerPort: 4000
         env:
@@ -30,13 +30,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
-        command: ["elixir"]
-        args: [
-          "--name", "app@$(POD_IP)",
-          "--cookie", "$(ERLANG_COOKIE)",
-          "--no-halt",
-          "-S", "mix", "app.start"
-        ]
+        command: ["./prod/rel/app/bin/app", "start"]
 
 ---
 kind: Service
