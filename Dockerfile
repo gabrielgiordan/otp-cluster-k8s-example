@@ -1,11 +1,11 @@
-FROM elixir:1.10-alpine AS build
+FROM elixir:1.11-alpine AS build
 
 ADD . .
 
 ENV MIX_ENV prod
 
 RUN mix local.hex --force && \
-	  mix local.rebar --force && \
+    mix local.rebar --force && \
     mix do deps.get, deps.compile && \
     mix do compile && \
     mix release
@@ -13,9 +13,9 @@ RUN mix local.hex --force && \
 FROM alpine:3.12 AS app
 
 RUN apk add --no-cache \
-    openssl \
-    ca-certificates \
-    bash
+  openssl \
+  ca-certificates \
+  bash
 
 COPY --from=build _build .
 

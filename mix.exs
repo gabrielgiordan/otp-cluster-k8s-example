@@ -20,8 +20,10 @@ defmodule App.MixProject do
 
   defp deps do
     [
-      {:cowboy, "~> 2.8"},
-      {:libcluster, "~> 3.2.1"}
+      {:plug_cowboy, "~> 2.4.1"},
+      {:jason, "~> 1.2"},
+      {:libcluster, "~> 3.2.1"},
+      {:horde, "~> 0.8.3"}
     ]
   end
 end
