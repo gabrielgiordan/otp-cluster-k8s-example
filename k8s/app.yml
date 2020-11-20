@@ -47,7 +47,7 @@ spec:
     spec:
       containers:
       - name: app-container
-        image: gabrielgiordan/app:libcluster
+        image: gabrielgiordan/app:dev
         ports:
         - containerPort: 4000
         env:
