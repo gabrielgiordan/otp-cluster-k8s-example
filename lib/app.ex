@@ -4,9 +4,12 @@ defmodule App do
   use Application
 
   def start(_type, _args) do
+    cluster_strategy = Application.fetch_env!(:app, :cluster_strategy)
+    port = Application.fetch_env!(:app, :port)
+
     children = [
-      {Cluster.Supervisor, [cluster_k8s(), [name: App.ClusterSupervisor]]},
-      {Plug.Cowboy, [scheme: :http, plug: App.Router, port: port()]}
+      {Cluster.Supervisor, [topologies(cluster_strategy), [name: App.ClusterSupervisor]]},
+      {Plug.Cowboy, [scheme: :http, plug: App.Router, port: port]}
     ]
 
     Supervisor.start_link(
@@ -16,27 +19,23 @@ defmodule App do
     )
   end
 
-  defp cluster_k8s() do
+  defp topologies(:k8s) do
     [
       app: [
         strategy: Cluster.Strategy.Kubernetes.DNS,
         config: [
-          service: "app-nodes",
+          service: "app-epmd",
           application_name: "app"
         ]
       ]
     ]
   end
 
-  defp cluster_gossip() do
+  defp topologies(:gossip) do
     [
       app: [
         strategy: Cluster.Strategy.Gossip
       ]
     ]
-  end
-
-  defp port() do
-    String.to_integer(System.get_env("PORT", "4000"))
   end
 end

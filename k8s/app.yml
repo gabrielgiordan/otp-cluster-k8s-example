@@ -1,8 +1,39 @@
 ---
+kind: Service
+apiVersion: v1
+
+metadata:
+  name: app-lb
+  namespace: default
+spec:
+  type: LoadBalancer
+  selector:
+    app: app
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 4000
+
+---
+kind: Service
+apiVersion: v1
+
+metadata:
+  name: app-epmd
+  namespace: default
+spec:
+  clusterIP: None
+  selector:
+    app: app
+  ports:
+    - name: epmd
+      port: 4369
+
+---
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: app
+  name: app-deploy
   namespace: default
 spec:
   replicas: 4
@@ -25,40 +56,9 @@ spec:
         - name: HOST
           value: localhost
         - name: ERLANG_COOKIE
-          value: secret
+          value: J30gFM/yqJFi33uy9m59Xl/GcZlLvnNeK4C3PkSy95LOlDx96rFTRGr3XWU8r5h6
         - name: POD_IP
           valueFrom:
             fieldRef:
               fieldPath: status.podIP
         command: ["./prod/rel/app/bin/app", "start"]
-
----
-kind: Service
-apiVersion: v1
-
-metadata:
-  name: app
-  namespace: default
-spec:
-  type: LoadBalancer
-  selector:
-    app: app
-  ports:
-    - name: http
-      port: 8000
-      targetPort: 4000
-
----
-kind: Service
-apiVersion: v1
-
-metadata:
-  name: app-nodes
-  namespace: default
-spec:
-  clusterIP: None
-  selector:
-    app: app
-  ports:
-    - name: epmd
-      port: 4369

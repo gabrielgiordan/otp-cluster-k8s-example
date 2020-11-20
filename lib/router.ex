@@ -6,12 +6,13 @@ defmodule App.Router do
   plug(Plug.Parsers, parsers: [:json], json_decoder: Jason)
   plug(:dispatch)
 
-  get "/health" do
+  get "/nodes" do
     send_resp(
       conn,
       200,
-      Jason.encode!(%{
-        nodes: Node.list()
+      json(%{
+        current_node: Node.self(),
+        connected_nodes: Node.list()
       })
     )
   end
@@ -19,4 +20,6 @@ defmodule App.Router do
   get _ do
     send_resp(conn, 404, "")
   end
+
+  defp json(term), do: Jason.encode!(term)
 end
