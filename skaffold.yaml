@@ -1,0 +1,13 @@
+apiVersion: skaffold/v2beta19
+kind: Config
+metadata:
+  name: otp-cluster-k-s-example
+build:
+  artifacts:
+  - image: gabrielgiordan/app
+    docker:
+      dockerfile: Dockerfile
+deploy:
+  kubectl:
+    manifests:
+    - k8s/app.yml
